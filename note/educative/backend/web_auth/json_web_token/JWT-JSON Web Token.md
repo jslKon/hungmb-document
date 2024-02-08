@@ -77,3 +77,24 @@ Since this is a signature, if someone tries to decode it they will not be able t
 
 ## JWT validation
 
+### How tokens are signed
+
+Symmetric signature: JWT signed using a secret key. 1 server sign and validate tokens. Use HMAC
+
+Asymmetric Signatures: suitable for distributed scenarios. multiple applications that can validate a given JWT. If we
+use a secret key to sign a JWT, then these applications will need that key to validate the token
+uses a private-public key pair for signing. There is one server that has the private key. This server generates the
+tokens, signs them using the private key, and shares it with the client
+
+When a server receives a token, it fetches the header and payload from that token.
+It then uses the secret key or the public key (in the case of asymmetric signing) to generate the signature from the
+header and payload.
+If the generated signature matches the signature provided in the JWT, then it is considered to be valid
+
+![img.png](img/JWT_token_validation_process.png)
+
+### Claim validations
+
+Check if the token is still valid. This can be validated through exp claim
+Validate that the token is actually meant for you through the aud claim
+Check if the token can be used at this time using the nbf claim.
