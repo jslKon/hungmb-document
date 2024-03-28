@@ -1,0 +1,358 @@
+openapi: 3.0.3
+info:
+  title: Airport API Specs
+  description: Airport API Specs for flights, tickets and checkouts
+  version: 1.0.0
+servers:
+  - url: 'https://{domain_name}/api/v1/'
+
+components:
+  responses:
+    BadRequestResponse:
+      description: Bad Request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Bad Request: Parameter 'example_param' is invalid."
+    UnauthorizedResponse:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Unauthorized: Authentication credentials were missing or incorrect."
+
+    NotFoundResponse:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Not Found: The requested resource was not found."
+
+    InternalServerErrorResponse:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Internal Server Error: An unexpected error occurred."
+  schemas:
+    Flight:
+      type: object
+      properties:
+        flightId:
+          type: string
+          description: Id of the flight
+          uniqueItems: true
+        departureTime:
+          type: string
+          description: time when the flight start
+        arrivalTime:
+          type: string
+          description: time when the flight end
+        origin:
+          $ref: "#/components/schemas/Airport"
+        destination:
+          $ref: "#/components/schemas/Airport"
+        price:
+          $ref: "#/components/schemas/Money"
+    Money:
+      type: object
+      properties:
+        currency:
+          type: string
+        amount:
+          type: number
+    Airport:
+      type: object
+      properties:
+        airportId:
+          type: string
+          description: Id of the airport
+          uniqueItems: true
+        airportName:
+          type: string
+          description: name of the airport
+          required: true
+    Ticket:
+      type: object
+      properties:
+        ticketId:
+          type: string
+          description: Id of the ticket
+          required: true
+        checkout:
+          $ref: "#/components/schemas/Checkout"
+        flight:
+          $ref: "#/components/schemas/Flight"
+        isTemporary:
+          type: boolean
+        ticketOwnerName:
+          type: string
+          description: The owner name of the ticket
+    Checkout:
+      type: object
+      properties:
+        checkoutId:
+          type: string
+          description: Id of the checkout
+          required: true
+        paidAt:
+          type: string
+        amountPaid:
+          $ref: "#/components/schemas/Money"
+        ticket:
+          $ref: "#/components/schemas/Ticket"
+    PageFlightResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Flight"
+        totalCount:
+          type: integer
+        totalPages:
+          type: integer
+        currentPage:
+          type: integer
+          description: start from 1
+        pageSize:
+          type: integer
+    PageTicketResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ticket"
+        totalCount:
+          type: integer
+        totalPages:
+          type: integer
+        currentPage:
+          type: integer
+          description: start from 1
+        pageSize:
+          type: integer
+
+paths:
+  /flights/{flightId}:
+    get:
+      parameters:
+        - name: flightId
+          in: path
+          description: Id of the flight
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Detail of the flight
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Flight"
+        500:
+          $ref: "#/components/responses/InternalServerErrorResponse"
+        404:
+          $ref: "#/components/responses/NotFoundResponse"
+  /flights:
+    get:
+      summary: Get paging flight and its details
+      parameters:
+        - name: origin
+          in: query
+          description: Id of the place where flight starts
+          schema:
+            type: string
+            required: true
+        - name: destination
+          in: query
+          description: Id of the place where flight ends
+          schema:
+            type: string
+            required: true
+        - name: fromDate
+          in: query
+          description: Date range start
+          schema:
+            type: string
+        - name: toDate
+          in: query
+          description: Date range end
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: size
+          in: query
+          schema:
+            type: integer
+      responses:
+        200:
+          description: A page of flights
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PageFlightResponse"
+        400:
+          $ref: "#/components/responses/BadRequestResponse"
+        500:
+          $ref: "#/components/responses/InternalServerErrorResponse"
+  /tickets:
+    get:
+      summary: Get paging ticket info
+      parameters:
+        - name: Authorization
+          in: header
+          description: JWT token
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: size
+          in: query
+          schema:
+            type: integer
+        - name: fromDate
+          in: query
+          schema:
+            type: string
+        - name: toDate
+          in: query
+          schema:
+            type: string
+      responses:
+        200:
+          description: Get paging ticket info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          $ref: "#/components/responses/BadRequestResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedResponse"
+        500:
+          $ref: "#/components/responses/InternalServerErrorResponse"
+  /tickets/{ticketId}:
+    get:
+      summary: Get ticket info
+      parameters:
+        - name: Authorization
+          in: header
+          description: JWT token
+          schema:
+            type: string
+        - name: ticketId
+          in: path
+          required: true
+          description: Id of the ticket
+          schema:
+            type: string
+      responses:
+        200:
+          description: Ticket info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          $ref: "#/components/responses/BadRequestResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedResponse"
+        404:
+          $ref: "#/components/responses/NotFoundResponse"
+        500:
+          $ref: "#/components/responses/InternalServerErrorResponse"
+    post:
+      summary: Create temporary ticket for customer
+      parameters:
+        - name: Authorization
+          in: header
+          description: JWT token
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                flightId:
+                  type: string
+                  required: true
+      responses:
+        200:
+          description: Created ticket info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          $ref: "#/components/responses/BadRequestResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedResponse"
+        500:
+          $ref: "#/components/responses/InternalServerErrorResponse"
+  /checkout:
+    post:
+      summary: Create a checkout for a ticket
+      parameters:
+        - name: Authorization
+          in: header
+          description: JWT token
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Checkout"
+      responses:
+        200:
+          description: Return ticket info with checkout
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Ticket"
+        400:
+          $ref: "#/components/responses/BadRequestResponse"
+        401:
+          $ref: "#/components/responses/UnauthorizedResponse"
+        500:
+          $ref: "#/components/responses/InternalServerErrorResponse"
+
+  
