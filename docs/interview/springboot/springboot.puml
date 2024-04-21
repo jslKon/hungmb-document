@@ -1,0 +1,110 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+* Spring Boot
+
+** Spring Data JPA
+*** JPA works with entity, not table!
+
+*** How to retrieve entity?
+
+**** Entity + relationship annotation
+
+**** Projection
+
+***** Using interface
+***** Using DTO
+**** Create entity for SQL View
+
+*** Transactional
+
+**** Used to wrap a transaction to DB \nManage create/commit/rollback process
+
+**** How transaction is implemented in Spring?
+
+***** IOC Container wrap bean into a proxy which \nopen/close transaction then call real method
+
+***** Proxy method
+****** Cglib
+****** JDK proxies
+
+***** Common mistakes
+
+****** Transactional on private method
+****** Call transactional method in same class
+
+**** Propagation level
+
+***** Tell Spring how to start/pause/create a transaction or not
+
+***** Levels
+****** REQUIRED (default)
+****** REQUIRED_NEW
+****** .....
+
+**** Isolation level
+
+***** Describe how changes applied by concurrent transactions
+
+***** Default: depends on DB
+
+***** Side effects
+****** Refer links: https://jennyttt.medium.com/dirty-read-non-repeatable-read-and-phantom-read-bd75dd69d03a
+
+****** Dirty read
+******* Read uncommitted changes from concurrent transaction
+
+****** Non-repeatable read
+******* Get different value on re-read of a row if a concurrent transaction updates the same row and commits
+
+****** Phantom read
+******* Get different rows after re-execution of a range query if another transaction adds or removes some rows in the range and commits
+
+****** Levels
+
+******* Read uncommitted: solve nothing
+
+******* Read committed: Only allow read after another transaction is committed \nSolve dirt read only
+
+******* Repeatable read: When start reading -> not allow modifying \nSolve dirt read + non-repeat read
+
+******* Serialization: Execute transaction in sequence \nSolve everything but slow
+
+*** Pitfalls
+
+**** Too many eager
+
+**** Fetch too much data
+
+**** n+1 query
+
+** Spring Security
+
+*** Version 5
+
+*** Version 6
+
+**** Architect
+
+***** 1. Security Filter chain
+
+****** Series of filter process HTTP requests
+
+***** 2. Authentication Manager
+
+****** Verify user identities + \nDelegate to actual Authentication Provider
+
+****** Multiple Authentication Provider -> diff types of Authentication
+
+***** 3. Authentication Provider
+
+****** Types off Authentication Provider
+
+******* DaoAuthenticationProvider
+******* LdapAuthenticationProvider
+******* JwtAuthenticationProvider
+
+****** Use to authenticate user
+
+** Spring AOP
+@endmindmap

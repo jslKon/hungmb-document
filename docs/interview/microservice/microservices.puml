@@ -1,0 +1,187 @@
+ @startmindmap
+'https://plantuml.com/mindmap-diagram
+
+title Microservices overview
+
+* Monolith drawback
+** Many line of codes after years of developing
+*** Too complex for single devs to catch up -> \nHard to maintain
+*** Larger project -> longer startup time
+
+** In CI/CD -> need to start everything up every deployment
+** Hard to scale horizontally
+
+* API gateway
+** A server that is the single entry point of the system.
+** Route + compose requests
+** Might also authen/lb/cache/...
+
+** Pros
+*** Client only talk to gateway
+
+** Cons
+*** Risk of becoming bottleneck
+
+** Implementing API gateway
+
+*** Performance and Scalability
+
+**** Consider building on a platform supporting non-blocking IO
+**** Using reactive programming model. For E.g: CompletableFuture
+**** Consider how to interact with services: synchronous (RestAPI...) or asynchronous (Message-queue)
+
+*** Service discovery
+
+**** API gateway should know location (IPs + ports) of services
+***** Traditional -> hardcode location
+***** Modern -> use discovery mechanism
+
+*** Handling partial failures
+
+**** Never block indefinitely for a down service
+***** Down service not important -> return hardcode data
+***** Down service important -> exception
+
+*** Consider return cached data when exception
+
+* Inter-process communication
+
+** Interaction styles
+
+*** one-to-one/one-to-many?
+**** one-to-one -> 1 client request -> processed by 1 service
+**** one-to-many -> 1 client request -> processed by services
+
+*** Sync/Async?
+**** Sync -> Client expect timely response, might block
+**** Async -> Client don't block while waiting for response
+
+*** Solutions:
+
+**** Request/response
+**** Notification: Client send req but not expect response
+**** Request/async response: Client send req but not expect response to come soon
+
+*** Pub/sub
+*** Pub/async sub
+
+*** <img:./interaction styles.png>
+
+** Deal with evolving APIs
+*** API should support both old/new version
+**** Change is backward compatible?
+***** Yes -> use new version API
+***** No -> Deploy both
+
+** Deal with failures
+
+*** Timeouts
+*** Rate limit
+*** Circuit breaker
+*** Fallback mechanism
+
+** Consider using message queue
+
+*** Pros
+**** Decouple client from service
+**** Fail resistance -> not required consumer to be up all the time
+**** Flexible interaction : Change from one-to-one to one-to-many easily
+
+*** Cons
+**** Complexity
+
+* Service discovery
+
+** Why need?
+** Patterns
+
+*** Client-side discovery patterns
+**** Client is responsible for determine network locations + lb
+
+*** Server-side discovery patterns
+**** //TODO add info
+
+** Service registry
+
+*** Store network locations of available services
+*** Netflix Eureka
+**** Client POST requests for registering
+**** Client PUT requests 30s for update
+**** client DELETE/No PUT to deregister
+
+* Event driven Data management for microservices (IMPORTANT)
+** Benefit of single DB -> easy to follow ACID
+
+** Challenges of microservices with multi DB
+
+*** Maintain consistency in transaction
+**** Solution 1: Use distributed transaction aka 2 phase commit -> both nodes either commit or abort
+
+***** 1st phase: commit-request phase (voting phase)
+****** Asking other nodes whether they can commit the proposed transaction
+
+***** 2nd phase: commit phase
+
+***** How to implement
+****** Use exactly-one processing
+
+** Event driven architecture
+
+*** What?
+**** A service publish event when smt happens \nOther service sub the events
+
+*** Events to handle transaction
+**** 1 transaction consists of multi-steps. Each event trigger 1 step
+
+*** Events to maintain pre-join data
+**** Provide 1 view and update the view based on update events
+
+*** Notes:
+**** Data is only eventual consistent
+**** Subscriber should handle duplicated events
+
+*** Publishing events using local transactions
+**** The challenge
+***** How to make the process of updating DB and publishing events atomic?
+
+**** The solution
+***** Create an Event table. Events are created and stored as "Not published" in DB
+***** Another thread/application queries Event table, publish the event then mark events as published
+
+**** Pros
+***** Guarantee event published
+**** Cons
+***** Devs might forget to publish events?
+
+*** Mining a DB Transaction log
+
+**** What?
+***** Use DB commit log to publish events. Logs for updates in DB is read then converted to events
+
+**** Pros
+***** Guarantee event published
+***** Separate event publishing from business logic
+
+**** Cons
+***** Each DB implement log differently
+***** Reverse engineer from DB logs to event
+
+*** Using Event sourcing
+
+**** What?
+***** Instead of storing states -> storing state-changing events
+***** Reconstruct entity latest states by replaying events
+***** Entity states changed -> save new event to DB
+
+**** Event store
+***** Event are persisted into event store
+***** Event store expose API to add/get/subscribe events
+
+**** Pros
+***** Provide audit log
+***** Separate business logic to exchange events
+
+**** Cons
+***** Learning curve
+
+@endmindmap

@@ -1,0 +1,48 @@
+@startmindmap
+title Backend Developer with Spring Boot
+
+* Backend Developer
+** Java
+*** Spring Boot
+**** Spring MVC
+**** Spring Data JPA
+**** Spring Security
+
+** RESTful APIs
+*** Design
+*** Implementation
+
+** Database
+*** SQL
+**** MySQL
+**** PostgreSQL
+*** NoSQL
+**** MongoDB
+**** Redis
+
+** Messaging
+*** Kafka
+*** RabbitMQ
+
+** Testing
+*** JUnit
+*** Mockito
+
+** Deployment
+*** Docker
+*** Kubernetes
+
+** CI/CD
+*** Jenkins
+*** GitLab CI/CD
+
+** Monitoring
+*** Prometheus
+*** Grafana
+
+** Logging
+*** ELK Stack
+**** Elasticsearch
+**** Logstash
+**** Kibana
+@endmindmap
