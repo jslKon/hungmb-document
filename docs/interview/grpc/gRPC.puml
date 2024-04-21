@@ -1,0 +1,41 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+title gRPC
+
+* HTTP2 vs HTTP
+
+** HTTP 1
+*** Synchronous. Req/res
+
+** HTTP 2.0
+
+*** Streaming/Multiplexing
+**** Break message
+
+*** Header compression
+
+*** Binary framing layer
+**** req/res is divided into small messages/frames, encoded in binary format
+
+** Protocol Buffer
+
+*** Problem of JSON
+**** No strict schema enforcing
+**** Not machine-friendly (Require parsing)
+
+*** ProtoBuf
+**** Define contract in .proto file
+**** Generate source in any language
+
+** gRPC
+
+*** Remote Procedure call
+**** Client-server communication that use a function call
+
+*** The idea
+**** Call a method on a server application on a different machine as if it were a local object
+**** Defining a service, specifying the methods, params, return type
+
+*** <img:./grpc call.png>
+@endmindmap
