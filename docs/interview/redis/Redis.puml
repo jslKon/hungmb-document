@@ -1,0 +1,120 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+title Redis
+
+* What?
+
+** In-mem db, open-source
+** Support many data structure
+
+* Use cases
+** Caching
+** Key-value DB
+** message queue
+
+* Architecture
+
+** Master-slave
+
+*** Master instance. Slave instance follow master
+*** Data write to master. Master sync with replicas (slaves) asynchronously
+**** Master send request to slave and not wait for response
+
+*** Pros
+**** Scale for read
+**** Write to master, Read in slave
+
+*** Cons
+**** Data inconsistency
+***** Master data and slave data might be different before sync process
+
+**** Master down -> who is the new master?
+
+** Sentinel
+
+*** Sentinel node monitor master and slave server
+*** Sentinel also serve as service discovery
+*** Master down -> sentinels select 1 node as leader and configure other to follow
+
+*** Pros
+**** Fix failover (vote master)
+
+*** Cons
+**** Data inconsistency still
+**** + Operation (manage sentinel node also)
+**** Still not scale for write
+
+** Cluster
+*** Distribute data on different server
+*** Multi-master. Each master has its own slaves
+
+*** How to distribute data?
+**** Split slots among master
+**** Using hash on keys to know what slot to put in
+
+*** Pros
+**** Solve failover
+***** Nodes communicate using gossip -> vote for next master if 1 fail
+
+**** Improve write due to multi-master
+
+*** Cons
+**** Still data inconsistency
+**** + Operation
+
+* How redis works?
+
+** Why fast?
+*** In-mem -> fast access compared to on disk
+
+*** Single thread
+**** Queue request then execute
+***** Avoid switch context
+***** Multi-thread is complex (lock shared rss, async...) -> hard to scale
+
+*** Support many data structure
+
+** How redis store data?
+
+*** Global hash table
+**** Key-value (pointer)
+
+***** <img:./Redis global hash table.png>
+
+*** Expired deletion
+
+**** 2 dict
+***** Key dict
+***** Expire dict
+
+**** First check key exist in Expire dict
+***** No -> read key value normally
+***** Yes -> compare to current time
+****** Smaller than current time?
+******* Yes -> expired and return null
+
+**** Active delete
+***** Periodic job
+
+* Data persistence
+
+** AOF -> save command logs
+** RDB -> snapshot DB
+
+* Data structure
+
+** String object
+*** Only want to store content
+
+** Hash table
+*** Need to access or update attributes in object
+
+** Sorted set
+*** Set + int value (Score) to sort. E.g: ZADD tutorials 1 redis
+
+* Distributed lock using Redis
+
+** Context: 2 request concurrently in DB from 2 instance
+
+@endmindmap

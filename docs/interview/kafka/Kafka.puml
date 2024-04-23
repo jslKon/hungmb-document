@@ -2,4 +2,37 @@
 'https://plantuml.com/mindmap-diagram
 
 title Kafka
+
+* What?
+
+** Pub/sub system
+
+* Terms
+
+** Message
+*** Unit data within Kafka
+*** Processed in batch. Large batch -> reduce round-trip, increase latency
+
+** Schemas
+*** Data format use both by publisher/subscriber
+
+** Topic and partition
+
+*** Message is categorized into topics
+*** Topics are broken down into partitions
+*** Message are append-only and read in order BUT if a topic has multiple partitions
+**** no guarantee time-ordering order across topic
+
+** Producer & Consumer
+*** Producer don't care partition (by default)
+*** Consumer keep track offset
+
+** Offset
+
+** Consumer group
+*** 1 partition is consumed by 1 consumer in a group
+
+** Broker & Cluster
+
+
 @endmindmap

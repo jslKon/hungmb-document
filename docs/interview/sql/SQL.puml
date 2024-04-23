@@ -1,0 +1,15 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+title SQL
+
+* JOIN
+
+** Types
+*** INNER JOIN
+*** LEFT JOIN
+*** RIGHT JOIN
+*** FULL JOIN
+*** SELF JOIN
+
+@endmindmap

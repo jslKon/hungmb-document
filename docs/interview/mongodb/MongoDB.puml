@@ -1,0 +1,36 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+title MongoDB
+
+* MongoDB best practice (That fit for me!)
+
+** Design based on application
+
+*** Should prioritize query performance?
+
+* MongoDB relations
+
+** One to few
+*** Embedding
+
+** One to many
+*** Reference
+
+** One to Squillions
+*** Child refer to parent
+
+* MongoDB design pattern
+
+** Bucket pattern
+
+*** Use a "bucket" to hold data
+
+** Computed pattern
+
+*** Read intensive
+*** Pros
+**** Reduce CPU for computation
+**** Query faster
+
+@endmindmap
