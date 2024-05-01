@@ -1,0 +1,36 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+title DB
+
+* Locking mechanism
+
+** Types of lock
+
+** Shared lock
+*** Allow read for multiple transactions -> read lock
+*** No transactions allowed to update
+
+** Exclusive lock
+*** Only 1 transaction can access row or tabble
+*** Other transaction has to wait
+
+** Optimistic locking
+*** Idea
+**** Allow parallel processing
+**** When 1 process committed -> other process must attempt transaction again
+
+** Pessimistic locking
+*** Idea
+*** Lock row when 1 try to modify/delete
+*** Other process must wait
+
+** What's the difference?
+*** Large transaction
+**** In large transaction with multiple steps -> pessimistic locking not good
+
+* Issue with lock
+** Deadlock
+*** 2 transactions need lock from others
+
+@endmindmap

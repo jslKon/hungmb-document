@@ -24,15 +24,83 @@ title Kafka
 **** no guarantee time-ordering order across topic
 
 ** Producer & Consumer
-*** Producer don't care partition (by default)
-*** Consumer keep track offset
 
-** Offset
+*** Producer
 
-** Consumer group
-*** 1 partition is consumed by 1 consumer in a group
+**** Notable configuration
+***** key.serializer: Define serializer class for key
+***** value.serializer: Define serializer class for value
 
-** Broker & Cluster
+**** Sending messages
+***** Primary methods
 
+****** Fire-and-forget
+******* Send message, not care ack
 
+****** Sync send
+******* send message, wait for response if send success or not
+
+****** Async send
+******* send with a callback function -> triggered when receive a response from kafka broker
+
+**** ACK
+
+***** ACK = 0
+****** No ack -> not wait for broker to response
+
+***** ACK = 1
+****** Producer receive success response from leader only
+****** No response -> retry send()
+****** Message lost if leader crashes and a new replica without message is elected as new leader
+
+***** ACK = all
+****** producer receive success response from all node
+
+*** Consumer
+
+**** How to scale?
+***** Adding more consumer to consumer group
+***** Adding more consumer group for each app that consume data
+
+**** Notable configuration
+
+**** Commit and offset
+
+***** How consumer commit offset?
+****** Send message to consumer_offset topic
+
+***** What if consumer crash/new consumer join -> where to pick up?
+****** Read latest committed offset
+
+***** Committed offset < last msg offset
+****** Msg sent twice
+
+***** Committed offset > last msg offset
+****** Miss msg
+
+***** Commit strategy
+
+****** Auto commit
+******* Try to commit every 5s, can be configured
+******* Commit b4 calling next poll()
+
+****** Commit current offset
+****** Commit specific offset
+
+* Reliability in Kafka
+
+** Producer
+*** Use ack=all
+*** Handle error from broker to producer
+*** Config retries
+
+** Consumer
+
+*** Some tips
+**** Always commit offset after event processed
+**** Commit frequency -> trade off between performance + duplication
+**** About retryable errors
+***** Commit last successfully processed record only. Use pause then
+***** Write to another topic (DLQ)
+**** Exactly-one: should use idempotent write
 @endmindmap
