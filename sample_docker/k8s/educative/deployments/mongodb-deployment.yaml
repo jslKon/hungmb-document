@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hungmb-mongodb-deployment
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      group-id: mongodb
+  template:
+    metadata:
+      labels:
+        group-id: mongodb
+    spec:
+      containers:
+        - name: db
+          image: mongo:3.3
+          ports:
+            - containerPort: 27017
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hungmb-mongodb-service
+spec:
+  type: ClusterIP
+  selector:
+    group-id: mongodb
+  ports:
+    - port: 27017
+

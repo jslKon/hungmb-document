@@ -1,0 +1,77 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: hungmb-cluster-mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: db
+  template:
+    metadata:
+      labels:
+        type: db
+    spec:
+      containers:
+        - name: db
+          image: mongo:3.3
+          ports:
+            - containerPort: 28017
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hungmb-cluster-service-db
+spec:
+  ports:
+    - port: 27017
+  selector:
+    type: db
+
+---
+
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: hungmb-cluster-go-api
+spec:
+  selector:
+    matchLabels:
+      type: apps
+  template:
+    metadata:
+      labels:
+        type: apps
+    spec:
+      containers:
+        - name: go-apps
+          image: vfarcic/go-demo-2
+          env:
+            - name: DB
+              value: hungmb-cluster-service-db
+          readinessProbe:
+            httpGet:
+              path: /demo/hello
+              port: 8080
+            periodSeconds: 1
+          livenessProbe:
+            httpGet:
+              path: /demo/hello
+              port: 8080
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hungmb-cluster-service-external
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    type: apps
+

@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: go-apps-deployment
+spec:
+  replicas: 3
+  minReadySeconds: 1
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: go-apps
+  template:
+    metadata:
+      labels:
+        app: go-apps
+    spec:
+      containers:
+        - name: go-apis
+          image: vfarcic/go-demo-2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DB
+              value: hungmb-mongodb-service
+          readinessProbe:
+            httpGet:
+              path: /demo/hello
+              port: 8080
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /demo/hello
+              port: 8080
+      restartPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: go-apps-service
+spec:
+  selector:
+    app: go-apps
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30000
