@@ -3,4 +3,24 @@
 
 title AWS for BE dev title
 
+* SNS/SQS
+** Why?
+*** SNS to fan out to multiple SQS/Email send
+
+** Types
+*** Standard -> Best effort message ordering
+*** FIFO -> Guarantee message ordering
+
+* S3
+
+** Store object/files
+** Emit event when bucket status change (E.g: new object put, delete, change ACL...)
+
+* DynamoDB
+
+** NoSQL DB, support Mongo
+
+* RDS
+** SQL DB
+
 @endmindmap
