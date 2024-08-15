@@ -1,0 +1,111 @@
+@startmindmap
+* Spring Core Interview Questions
+
+** Overview
+
+*** What is Spring Framework?
+**** Lightweight framework for Java
+
+*** Core features of Spring
+**** IoC, AOP, Data Access, MVC, Security, etc.
+
+*** Benefits of using Spring
+**** Modularity, Testability, Scalability
+
+** Spring Core Container
+
+*** Inversion of Control (IoC)
+**** Delegation of control to container
+
+*** Dependency Injection (DI)
+**** Injecting dependencies into objects
+
+*** Types of DI
+**** Constructor, Setter, Field
+
+*** Spring IoC Container
+**** ApplicationContext vs BeanFactory
+
+***** ApplicationContext == Advanced BeanFactory
+***** ApplicationContext get bean
+
+*** Bean Scope
+**** Singleton, Prototype
+
+*** Bean Lifecycle
+**** Initialization, Post-Processing, Destruction
+
+*** Annotations vs XML Configuration
+**** Common annotations, XML examples
+
+** Spring AOP
+
+*** What is AOP?
+**** Aspect-Oriented Programming
+
+*** Terminology
+
+**** Aspect
+***** An Aspect is a module that encapsulates a concern that cuts across multiple classes or methods
+
+**** Join point
+***** In Spring AOP, a join point always represents a method execution
+
+**** Advice
+***** Advice is the action taken by an aspect at a particular join point
+***** Types of Advice
+****** Before, After, Around
+
+**** Pointcut
+***** A Pointcut is an expression that matches join points
+
+*** Use cases of AOP
+**** Cross-cutting concerns (logging, security)
+
+** Spring Data Access
+
+*** Spring JDBC
+**** JdbcTemplate, NamedParameterJdbcTemplate
+**** Transaction Management, Exception Handling
+
+*** ORM Integration
+**** Hibernate, JPA with Spring
+
+**** Transaction Management
+
+** Spring MVC
+*** Overview of Spring MVC
+**** Web framework for building MVC apps
+*** DispatcherServlet
+**** Front controller for Spring MVC
+*** Controller
+**** Handles requests, returns models/views
+*** View Resolver
+**** Maps view names to actual views
+*** ModelAndView
+**** Object holding both model and view
+*** Form Handling
+**** Binding forms to models
+*** Exception Handling
+**** Handling errors in Spring MVC
+** Spring Security
+*** What is Spring Security?
+**** Framework for securing Java apps
+*** Authentication and Authorization
+**** User validation and access control
+*** Configuring Spring Security
+**** XML vs Java-based configuration
+*** Role-based access control
+**** Access rights based on roles
+** Spring Boot (if relevant)
+*** Introduction to Spring Boot
+**** Simplified Spring application development
+*** Spring Boot Annotations
+**** Key annotations (e.g., @SpringBootApplication)
+*** Auto-Configuration
+**** Automatic setup of Spring components
+*** Spring Boot Actuator
+**** Monitoring and managing apps
+*** Profiles in Spring Boot
+**** Environment-specific configurations
+@endmindmap

@@ -1,0 +1,113 @@
+@startmindmap
+* Java Core Interview Questions
+** Basics
+*** What is Java?
+**** Object-oriented, platform-independent programming language
+*** Features of Java
+**** OOP, Platform independence, Robustness, Security, etc.
+*** JDK, JRE, JVM
+**** Development Kit, Runtime Environment, Virtual Machine
+*** Java Memory Management
+
+**** Stack
+***** Store local primitive variables and references to object
+***** Data is only available while the method or block that created it is executing
+
+**** Heap
+***** Class instances
+
+**** GC
+
+** Object-Oriented Programming (OOP)
+*** Principles of OOP
+
+**** Encapsulation
+***** Bundling data with methods
+***** Access control (private, protected, public)
+**** Inheritance
+***** Reusing code from parent class
+***** Extending functionality
+**** Polymorphism
+***** Overloading (same method, different parameters)
+***** Overriding (subclass method replacing parent method)
+**** Abstraction
+***** Hiding implementation details
+***** Providing a simple interface
+
+*** Classes and Objects
+**** Blueprints and instances
+*** Constructors
+**** Special methods to initialize objects
+*** Method Overloading vs Overriding
+**** Compile-time vs Runtime polymorphism
+*** Inheritance
+**** Reusability of code
+*** Interfaces and Abstract Classes
+**** Contracts and partial implementation
+*** Access Modifiers
+**** Private, Default, Protected, Public
+** Exception Handling
+*** What is an Exception?
+**** Runtime errors causing abnormal termination
+*** Types of Exceptions
+**** Checked vs Unchecked exceptions
+*** Try-Catch-Finally
+**** Handling exceptions gracefully
+*** Throw vs Throws
+**** Raising and declaring exceptions
+*** Custom Exceptions
+**** User-defined exception classes
+** Collections Framework
+*** What is Collections Framework?
+**** Unified architecture for data manipulation
+*** List, Set, Map
+**** Key interfaces in Collections
+*** ArrayList vs LinkedList
+**** Differences in implementation and usage
+*** HashSet vs TreeSet
+**** Differences in performance and sorting
+*** HashMap vs TreeMap
+**** Key-value pairs with different ordering
+*** Iterator vs ListIterator
+**** Traversal of collections
+** Multithreading and Concurrency
+*** What is Multithreading?
+**** Simultaneous execution of threads
+*** Thread Lifecycle
+**** New, Runnable, Blocked, Waiting, Terminated
+*** Creating Threads
+**** Extending Thread class, Implementing Runnable
+*** Synchronization
+**** Controlling access to shared resources
+*** Deadlock
+**** Situation where threads are waiting forever
+*** Executor Framework
+**** Managing threads efficiently
+** Java Input/Output (I/O)
+*** What is Java I/O?
+**** Reading and writing data streams
+*** Byte Streams vs Character Streams
+**** Handling raw vs character data
+*** Serialization
+**** Converting objects to byte streams
+*** File Handling
+**** Reading, writing, and manipulating files
+** Java 8 Features (if relevant)
+*** Lambda Expressions
+**** Simplified syntax for anonymous classes
+*** Stream API
+**** Processing sequences of data
+*** Functional Interfaces
+**** Interfaces with a single abstract method
+*** Optional Class
+**** Handling null values more gracefully
+*** Default Methods
+**** Methods with implementation in interfaces
+** Memory Management
+*** Stack vs Heap
+**** Memory allocation differences
+*** Garbage Collection
+**** Automatic memory management
+*** Finalize Method
+**** Cleanup before garbage collection
+@endmindmap

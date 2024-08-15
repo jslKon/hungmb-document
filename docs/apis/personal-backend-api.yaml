@@ -1,0 +1,30 @@
+openapi: 3.0.3
+info:
+  title: API docs for my personal project
+  description: API docs for my personal project
+  version: 1.0.0
+servers:
+  - url: 'https://jslkon.id.vn/api/v1'
+
+components:
+  schemas:
+    UserInfo:
+      type: object
+
+paths:
+  /userinfo/{userId}:
+    get:
+      description: Get user info by id
+      parameters:
+        - name: userId
+          in: path
+          description: UUID of user
+          schema:
+            type: string
+      responses:
+        200:
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:

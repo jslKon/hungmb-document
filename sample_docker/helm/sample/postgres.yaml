@@ -1,0 +1,10 @@
+fullnameOverride: "postgres"
+
+image:
+  tag: 11.14.0-debian-10-r17
+
+auth:
+  postgresPassword: "postgres"
+  username: "kanban"
+  password: "kanban"
+  database: "kanban"

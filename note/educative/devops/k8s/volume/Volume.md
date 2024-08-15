@@ -28,3 +28,71 @@ Note: Do not use hostPath to store a state of an application. Since it mounts a 
 Pod, it is not fault-tolerant. If the server fails, Kubernetes will schedule the Pod to a healthy node, and the state
 will be lost
 
+## Host path to inject configuration
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus
+spec:
+  selector:
+    spec:
+      containers:
+        volumeMounts:
+          - mountPath: /etc/prometheus/prometheus.yml
+            name: prom-conf
+      volumes:
+        - name: prom-conf
+          hostPath:
+            path: /files/prometheus-conf.yml
+            type: File
+...
+```
+
+-> files in host available inside container
+-> But not a good idea
+A hostPath volume maps a directory from a host to where the Pod is running. Using it to “inject” configuration files
+into containers would mean that we’d have to make sure that the file is present on every node of the cluster
+
+For e.g:
+Consider a Pod that mounts /var/log/myapp from the host. If the Pod gets scheduled to a node where /var/log/myapp
+doesn't exist or contains different files, the Pod won't function as intended
+
+## Maintain states
+
+When Kubernetes recreates the failed container, it creates a new one from the same image. Everything we generated inside
+the running container is no more. We reset to the initial state
+
+### Use empty dir volume type
+
+```yaml
+...
+kind: Deployment
+...
+spec:
+  ...
+  template:
+    ...
+    spec:
+      containers:
+        ...
+        volumeMounts:
+            - mountPath: /var/jenkins_home
+              name: jenkins-home
+      volumes:
+        - emptyDir: { }
+          name: jenkins-home
+...
+```
+
+An emptyDir volume is created when a Pod is assigned to a node. It will exist for as long as the Pod continues running
+on that server
+
+When a container crashes, a Pod is not removed from the node. Instead, Kubernetes will recreate the failed container
+inside the same Pod and, therefore, preserve the emptyDir volume
+
+There is an unwritten assumption that emptyDir is used for testing purposes and will be changed to something else before
+it reaches production
+
+![img.png](img/Content explored.png)
