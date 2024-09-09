@@ -80,7 +80,7 @@ title Redis
 *** Global hash table
 **** Key-value (pointer)
 
-***** <img:./Redis global hash table.png>
+***** <img:./img.png>
 
 *** Expired deletion
 

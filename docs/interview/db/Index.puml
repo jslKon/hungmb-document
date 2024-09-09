@@ -1,0 +1,44 @@
+@startmindmap
+'https://plantuml.com/mindmap-diagram
+
+title Index
+
+* What?
+** Data structure that improve speed of data retrieval
+** Stored on disk
+
+* Cons of index
+** Slow down write ops
+** More physical space
+** Take time to create/maintain index
+
+* Classify
+
+** By structure
+
+*** B-tree
+**** Each node contains a sorted list of keys
+**** Good for range query
+
+*** Hash
+**** Use hash function to map key to specific locations
+**** Good for "=" query
+
+*** Inverted
+
+** By storage
+
+*** Clustered
+**** Determine physicals order of data in table
+**** Leaf node store actual data
+**** 1 table = 1 clustered index
+
+*** Non-clustered
+**** Value of Non-clustered index is the primary key
+**** Accessing data using Non-clustered index require at least 2 disk read. 1 for get primary key, 1 for actual data
+
+** Col numbs
+*** Single-col
+*** Composite
+
+@endmindmap

@@ -1,0 +1,17 @@
+@startuml
+state "Order Status Flow" as OrderStatus {
+
+  [*] --> Created : Order is created
+
+  Created --> Queuing : Customer confirms order
+
+  Queuing --> Processing : CoffeeShopApp publishes "Processing Order"
+  Queuing --> Cancelled : Customer cancels order
+
+  Processing --> Done : CoffeeShopApp publishes "Done Order"
+
+  Cancelled --> [*]
+  Done --> [*]
+}
+
+@enduml

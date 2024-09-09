@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+left to right direction
+
+:Customer:
+
+package CustomerApp as "Customer App" {
+    usecase "register new customer"
+    usecase "login"
+    usecase "find nearest shop"
+    usecase "view menu"
+    usecase "create order"
+    usecase "view order info"
+    usecase "cancel order info"
+    usecase "view order queue"
+}
+
+Customer ---> "register new customer"
+Customer ---> "login"
+Customer ---> "find nearest shop"
+Customer ---> "view menu"
+Customer ---> "create order"
+Customer ---> "view order info"
+Customer ---> "cancel order info"
+Customer ---> "view order queue"
+
+@enduml

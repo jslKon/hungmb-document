@@ -1,0 +1,65 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant Kafka
+box UserManagementService
+participant "Listener/Event Consumer" as Listener
+participant "KafkaEventFacadeBean" as KafkaEventFacade
+participant "AgencyInformationStrategy" as AgencyInformationStrategy
+end box
+
+Kafka <- Listener: Polling to consume event
+note right
+AgencyEventVo : {
+   "AgencyId" : ,
+   "Id": ,
+   "changeType" : "Update",
+   "changedBy" : "",
+   "changeTime" : "",
+   "metadata" : {},
+   "data" : {
+       "data" : {},
+       "metadata": {},
+       "objectType" : {}
+   }
+}
+end note
+
+alt Convert success
+   Listener -> Listener : Convert Kafka Event to internal Event
+   Listener -> Listener : Validate event
+   return AgencyEventVo
+else any exception
+   Listener -> Listener: Log exception and ignore to commit offset
+end
+
+
+note right
+AgencyEventVo : {
+
+}
+end note
+
+group Business Logic [Transactional]
+   Listener -> KafkaEventFacade: handleAgencyKafkaEvent
+
+   KafkaEventFacade -> AgencyInformationStrategy: Check if agency existed or not by id
+   alt existed
+        KafkaEventFacade -> AgencyInformationStrategy: Update Agency info
+        KafkaEventFacade -> AgencyInformationStrategy: Update Agency name to AgencyIntersection if any change
+        note right
+            Why AgencyIntersection need agency name?
+        end note
+        KafkaEventFacade -> AgencyInformationStrategy: Update Agency Setting
+        note right
+            Update lastModifiedBy, lastModifiedAt
+        end note
+    else agency not existed
+        KafkaEventFacade -> Listener: throw NotRetryableException
+   end
+end
+
+' Data hub synchronizer????/
+@enduml

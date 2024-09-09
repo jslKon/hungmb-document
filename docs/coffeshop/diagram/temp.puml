@@ -1,0 +1,52 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+@startuml
+actor Customer
+
+Customer -> CustomerApp : Open App
+Customer -> CustomerApp : Register with mobile, name, address
+
+CustomerApp -> UserService : POST /register
+UserService -> Database : Store user details
+Database -> UserService : Acknowledgment
+UserService -> CustomerApp : Registration success
+CustomerApp -> Customer : Display registration success
+
+== Find Nearby Coffee Shops ==
+Customer -> CustomerApp : Search for nearby coffee shops
+CustomerApp -> LocationService : GET /shops/nearby?lat=...&lng=...
+LocationService -> Database : Fetch nearby coffee shops
+Database -> LocationService : Return list of coffee shops
+LocationService -> CustomerApp : Return list of coffee shops
+CustomerApp -> Customer : Display nearby coffee shops
+
+== Place an Order ==
+Customer -> CustomerApp : Select coffee shop and view menu
+CustomerApp -> MenuService : GET /shops/{shopId}/menu
+MenuService -> Database : Fetch menu for selected shop
+Database -> MenuService : Return menu
+MenuService -> CustomerApp : Return menu
+CustomerApp -> Customer : Display menu
+
+Customer -> CustomerApp : Place an order
+CustomerApp -> OrderService : POST /orders
+OrderService -> Database : Store order and update queue
+Database -> OrderService : Acknowledgment
+OrderService -> NotificationService : Send order confirmation
+NotificationService -> CustomerApp : Notify customer of order confirmation
+OrderService -> CustomerApp : Return order status and queue position
+CustomerApp -> Customer : Display order status and queue position
+
+== Cancel an Order ==
+Customer -> CustomerApp : Cancel order
+CustomerApp -> OrderService : DELETE /orders/{orderId}
+OrderService -> Database : Remove order and update queue
+Database -> OrderService : Acknowledgment
+OrderService -> NotificationService : Send cancellation confirmation
+NotificationService -> CustomerApp : Notify customer of cancellation
+OrderService -> CustomerApp : Return cancellation status
+CustomerApp -> Customer : Display cancellation confirmation
+
+@enduml
+@enduml

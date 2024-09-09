@@ -1,0 +1,64 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+participant Kafka
+box UserManagementService
+participant "Listener/Event Consumer" as Listener
+participant "KafkaEventFacadeBean" as KafkaEventFacade
+participant "AgencyInformationStrategy" as AgencyInformationStrategy
+end box
+participant "Internal APIs" as InternalAPI
+
+Kafka <- Listener: Polling to consume event
+note right
+AgencyEventVo : {
+   "AgencyId" : ,
+   "Id": ,
+   "changeType" : "Update",
+   "changedBy" : "",
+   "changeTime" : "",
+   "metadata" : {},
+   "data" : {
+       "data" : {},
+       "metadata": {},
+       "objectType" : {}
+   }
+}
+end note
+
+alt Convert success
+   Listener -> Listener : Convert Kafka Event to internal Event
+   Listener -> Listener : Validate event
+   return AgencyEventVo
+else any exception
+   Listener -> Listener: Log exception and ignore to commit offset
+end
+
+
+note right
+AgencyEventVo : {
+
+}
+end note
+
+group Business Logic [Transactional]
+   Listener -> KafkaEventFacade: handleAgencyKafkaEvent
+
+   alt success
+    KafkaEventFacade -> AgencyInformationStrategy: Delete Agency By id
+    KafkaEventFacade -> AgencyInformationStrategy: Delete AgencyIntersection By agency_id
+    KafkaEventFacade -> AgencyInformationStrategy: Delete AgencyLicense By agency_id
+    KafkaEventFacade -> AgencyInformationStrategy: Delete AgencyUserSetting By agency_id
+    KafkaEventFacade -> InternalAPI: Delete Agency related data in other services by agency_id
+    note right
+     Call api in another thread.
+     Ignore exception
+    end note
+   else any exception
+    AgencyInformationStrategy -> KafkaEventFacade: Log exception and throw NotRetryAbleException
+   end
+end
+' Data hub synchronizer????/
+@enduml

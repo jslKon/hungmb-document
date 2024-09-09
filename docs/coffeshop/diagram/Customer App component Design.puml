@@ -1,0 +1,39 @@
+@startuml
+skinparam linetype ortho
+package "Customer" {
+  [CustomerApp] <<Mobile App>>
+}
+
+package "Shop" {
+  [CoffeeShopApp] <<Service>>
+}
+
+package "Gateway Layer" {
+  [APIGateway] <<Gateway>>
+}
+
+package "Services Layer" {
+  [UserService] <<Service>>
+  [OrderService] <<Service>>
+  [PaymentService] <<Service>>
+}
+
+package "Messaging Layer" {
+  [Queue] <<Queue>>
+}
+
+CustomerApp ----> APIGateway : API Requests
+
+APIGateway ----> UserService : User Registration & Authentication
+APIGateway ----> OrderService : Order Management
+APIGateway ----> CoffeeShopApp : Get Coffee Shops, Menu
+
+OrderService ----> Queue : Send Order Events
+PaymentService ----> Queue : Send Payment Events
+CoffeeShopApp ----> Queue : Send Order Status Events
+
+Queue ----> OrderService : Consume Payment/Order Events
+Queue ----> CoffeeShopApp : Consume Order Events
+Queue ----> PaymentService : Consume Cancel Events
+
+@enduml

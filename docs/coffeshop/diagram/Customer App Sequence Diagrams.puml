@@ -1,0 +1,129 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+actor Customer
+participant CustomerApp
+participant APIGateway
+participant UserService
+participant OrderService
+participant Queue
+participant PaymentService
+participant CoffeeShopApp
+
+== Register ==
+
+Customer -> CustomerApp : Register with mobile, name, address
+
+CustomerApp -> APIGateway : POST /register
+
+APIGateway -> UserService : POST /register
+UserService -> APIGateway : Registration success
+
+APIGateway -> CustomerApp : Registration success
+CustomerApp -> Customer : Display registration success
+
+== Authenticate ==
+
+Customer -> CustomerApp : Log in with credentials
+CustomerApp -> APIGateway : POST /oauth/token (with credentials)
+APIGateway -> UserService : POST /oauth/token (with credentials)
+UserService -> UserService : Validate credentials and retrieve user details
+UserService -> UserService : Generate JWT (access token)
+UserService -> APIGateway : Return JWT (access token)
+APIGateway -> CustomerApp : Return JWT (access token)
+
+== Find Nearby Coffee Shops ==
+
+Customer -> CustomerApp : Search for nearby coffee shops
+
+CustomerApp -> APIGateway : GET /shops?lat=...&lng=...
+APIGateway -> CoffeeShopApp : GET /shops?lat=...&lng=...
+CoffeeShopApp -> APIGateway : Return list of coffee shops
+APIGateway -> CustomerApp : Return list of coffee shops
+CustomerApp -> Customer : Display nearby coffee shops
+
+== Get menu ==
+Customer -> CustomerApp : Select coffee shop and view menu
+CustomerApp -> APIGateway : GET /shops/{shopId}/menu
+APIGateway -> CoffeeShopApp : GET /shops/{shopId}/menu
+CoffeeShopApp -> APIGateway : Return menu
+APIGateway -> CustomerApp : Return menu
+
+== Create an Order ==
+
+Customer -> CustomerApp : Place an order
+CustomerApp -> APIGateway : POST /orders
+APIGateway -> OrderService : POST /orders
+OrderService -> OrderService : Store new order
+
+OrderService -> APIGateway : Return order info with status "Wait for Payment confirm"
+APIGateway -> CustomerApp : Return order info with status "Wait for Payment confirm"
+
+== Confirm an Order ==
+
+Customer -> CustomerApp : Click confirm order
+CustomerApp -> APIGateway : PUT /orders/{orderId}
+APIGateway -> OrderService : PUT /orders/{orderId}
+
+OrderService -> Queue: Send an event for Payment service to check if payment is available(enough money to proceed etc)
+Queue -> PaymentService: Consume event
+PaymentService -> PaymentService: Do validate and hold customer money
+PaymentService -> Queue: Send an event for Order Service to notify
+Queue -> OrderService: Consume event
+
+OrderService -> Queue: Send new order event to CoffeeShopApp
+Queue -> CoffeeShopApp: Consume Event
+
+OrderService -> OrderService : Change order status to "Queuing"
+OrderService -> APIGateway : Return order info with status "Queuing"
+APIGateway -> CustomerApp : Return order info with status "Queuing"
+
+== Get order info ==
+
+Customer -> CustomerApp : Click order that customer want to see
+CustomerApp -> APIGateway : GET /orders/{orderId}
+APIGateway -> OrderService : GET /orders/{orderId}
+
+OrderService -> APIGateway : Return order info with status
+APIGateway -> CustomerApp : Return order info with status
+
+== Get orders info by customer id ==
+
+Customer -> CustomerApp : Click order that customer want to see
+CustomerApp -> APIGateway : GET /customers/{customerId}/orders
+APIGateway -> OrderService : GET /customers/{customerId}/orders
+
+OrderService -> APIGateway : Return order info with status
+APIGateway -> CustomerApp : Return order info with status
+
+== Cancel Order ==
+
+Customer -> CustomerApp : Click cancel order
+CustomerApp -> APIGateway : DELETE /orders/{orderId}
+APIGateway -> OrderService : DELETE /orders/{orderId}
+
+OrderService -> OrderService: Check if order is in "Processing" status or not. If processing then not allow to cancel
+OrderService -> Queue: Send an event for Payment service to notify cancel
+Queue -> PaymentService: Consume event
+PaymentService -> PaymentService: Do validate and return money to customer
+PaymentService -> Queue: Send an event for Order Service to notify
+Queue -> OrderService: Consume event
+OrderService -> OrderService : Change order status to "Canceled"
+OrderService -> APIGateway : Return order info with status "Canceled"
+APIGateway -> CustomerApp : Return order info with status "Canceled"
+
+== Process Order ==
+
+CoffeeShopApp -> Queue: Event to notify an order is being processed
+Queue -> OrderService: Consume event
+OrderService -> OrderService: Change order status to "Processing"
+
+== Done Order ==
+
+CoffeeShopApp -> Queue: Event to notify an order is done
+Queue -> OrderService: Consume event
+OrderService -> OrderService: Change order status to "Done"
+
+@enduml
