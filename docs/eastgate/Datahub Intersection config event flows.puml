@@ -1,0 +1,66 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+participant Kafka
+box DataHub
+participant "Listener/Event Consumer" as Listener
+participant "Facade Layer" as FacadeLayer
+participant "Service Layer" as ServiceLayer
+end box
+
+== Consume event ==
+
+Kafka <- Listener: Polling to consume event
+
+alt Convert success
+   Listener -> FacadeLayer : Convert Kafka Event to internal Event & Validate event
+   note right
+   Convert from byte[] to Java Object
+   Validate using Spring Validator
+   end note
+
+   FacadeLayer -> ServiceLayer: Handle based on event type (Create/Update/Delete)
+else deserialize or validate exception
+   Listener -> Listener: Log exception and commit offset. No retry
+end
+
+== Create/Update Intersection Config ==
+
+alt Business logic
+    ServiceLayer -> ServiceLayer: Map config from events
+    note right
+        Map intersection config from
+        Studio config to Insight config
+    end note
+    ServiceLayer -> ServiceLayer: Get timezone config based on latitude and longitude
+
+    ServiceLayer -> ServiceLayer : get existed agency or created new one by id
+    ServiceLayer -> ServiceLayer : find intersection by id
+    alt Intersection existed
+        alt Intersection existed in another agency already
+            ServiceLayer -> FacadeLayer : throw InternalException
+        end
+    else IntersectionAgency not present
+        ServiceLayer -> ServiceLayer : create new intersection
+    end
+
+    ServiceLayer -> ServiceLayer : find latest configuration
+
+    alt Latest configuration start time is after new config update time
+        ServiceLayer -> FacadeLayer : throw InternalException
+    end
+
+    ServiceLayer -> ServiceLayer : Save latest configuration end time
+    ServiceLayer -> ServiceLayer : Create new configuration and set start time
+
+    Listener -> Kafka: Commit offset
+else Internal Exception
+    Listener -> Kafka: Log exception and commit offset. No retry
+end
+
+== Delete Intersection Config ==
+
+'do nothing
+Listener -> Kafka: Commit offset
+
+@enduml

@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+participant Kafka
+box DataHub
+participant "Listener/Event Consumer" as Listener
+participant "Facade Layer" as FacadeLayer
+participant "Service Layer" as ServiceLayer
+end box
+
+== Consume event ==
+
+Kafka <- Listener: Polling to consume event
+
+alt Convert success
+   Listener -> FacadeLayer : Convert Kafka Event to internal Event & Validate event
+   note right
+   Convert from byte[] to Java Object
+   Validate using Spring Validator
+   end note
+
+   FacadeLayer -> ServiceLayer: Handle based on event type (Create/Update/Delete)
+else deserialize or validate exception
+   Listener -> Listener: Log exception and commit offset. No retry
+end
+
+== Create Agency ==
+
+ServiceLayer -> ServiceLayer: Create new agency id
+Listener -> Kafka: Commit offset
+
+== Update Agency ==
+
+'do nothing
+Listener -> Kafka: Commit offset
+
+== Delete Agency ==
+
+ServiceLayer -> ServiceLayer: Find all intersection by agencyId
+ServiceLayer -> ServiceLayer: Delete all intersection-related data
+note right
+Intersection config, Perflog events,
+Perflog Missing, Archived Perflog
+end note
+ServiceLayer -> ServiceLayer: Delete all intersection by agencyId
+ServiceLayer -> ServiceLayer: Delete agency
+ServiceLayer -> FacadeLayer: List of deleted intersection ids
+Listener -> Kafka: Commit offset
+
+@enduml

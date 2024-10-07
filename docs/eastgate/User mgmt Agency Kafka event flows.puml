@@ -1,0 +1,70 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+participant Kafka
+box UserManagementService
+participant "Listener/Event Consumer" as Listener
+participant "Facade Layer" as FacadeLayer
+participant "Service Layer" as ServiceLayer
+end box
+
+== Consume event ==
+
+Kafka <- Listener: Polling to consume event
+
+alt Convert success
+   Listener -> FacadeLayer : Convert Kafka Event to internal Event & Validate event
+   note right
+   Convert from byte[] to Java Object
+   Validate using Spring Validator
+   end note
+
+   FacadeLayer -> ServiceLayer: Handle based on event type (Create/Update/Delete)
+else deserialize or validate exception
+   Listener -> Listener: Log exception and commit offset. No retry
+end
+
+== Create Agency ==
+
+alt Agency not existed
+   ServiceLayer -> ServiceLayer: Create new Agency with default setting
+   note right
+   Default display setting/saturation
+   end note
+else Agency existed
+   ServiceLayer -> ServiceLayer: throw UserManagementBusinessException
+   Listener -> Kafka: Commit offset
+end
+
+== Update Agency ==
+
+alt Agency not existed
+   ServiceLayer -> ServiceLayer: Create new Agency with default setting
+   note right
+   Default display setting/saturation
+   end note
+else Agency existed
+   ServiceLayer -> ServiceLayer: update base info only
+   note right
+   Agency name/status
+   Metadata like update time/update by
+   end note
+   Listener -> Kafka: Commit offset
+end
+
+== Delete Agency ==
+
+ServiceLayer -> ServiceLayer: Delete Agency setting
+ServiceLayer -> ServiceLayer: Delete User settings by agency id
+ServiceLayer -> ServiceLayer: Delete Agency license
+ServiceLayer -> ServiceLayer: Delete corridor by agencyId
+
+group Not roll back if fail
+    ServiceLayer -> ServiceLayer: Call API to delete agency and related data in analysis service
+    ServiceLayer -> ServiceLayer: Call API to delete agency and related data in rule service
+    ServiceLayer -> ServiceLayer: Send notification to anyone with role Yunex admin
+end
+
+Listener -> Kafka: Commit offset
+
+@enduml

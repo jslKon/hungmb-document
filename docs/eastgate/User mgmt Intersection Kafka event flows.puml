@@ -1,0 +1,67 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+participant Kafka
+box UserManagementService
+participant "Listener/Event Consumer" as Listener
+participant "Facade Layer" as FacadeLayer
+participant "Service Layer" as ServiceLayer
+end box
+
+== Consume event ==
+
+Kafka <- Listener: Polling to consume event
+
+alt Convert success
+   Listener -> FacadeLayer : Convert Kafka Event to internal Event & Validate event
+   note right
+   Convert from byte[] to Java Object
+   Validate using Spring Validator
+   end note
+
+   FacadeLayer -> ServiceLayer: Handle based on event type (Create/Update/Delete)
+else deserialize or validate exception
+   Listener -> Listener: Log exception and commit offset. No retry
+end
+
+== Create Intersection ==
+
+alt Intersection not existed
+   alt Agency is existed
+    ServiceLayer -> ServiceLayer: find timezone by latitude and longitude
+    ServiceLayer -> ServiceLayer: create new intersection
+   else
+    ServiceLayer -> ServiceLayer: throw UserManagementBusinessException
+    Listener -> Kafka: Commit offset
+   end
+else Intersection existed
+   ServiceLayer -> ServiceLayer: throw UserManagementBusinessException
+   Listener -> Kafka: Commit offset
+end
+
+== Update Intersection ==
+
+alt Intersection not existed
+   alt Agency is existed
+    ServiceLayer -> ServiceLayer: find timezone by latitude and longitude
+    ServiceLayer -> ServiceLayer: create new intersection
+   else
+    ServiceLayer -> ServiceLayer: throw UserManagementBusinessException
+    Listener -> Kafka: Commit offset
+   end
+else Intersection existed
+   ServiceLayer -> ServiceLayer: update base info only
+   note right
+    Intersection name/status/model/version/latitude/longitude
+   end note
+   Listener -> Kafka: Commit offset
+end
+
+== Delete Intersection ==
+
+ServiceLayer -> ServiceLayer: Delete corridor by intersectionId
+ServiceLayer -> ServiceLayer: Delete intersection by intersectionId
+
+Listener -> Kafka: Commit offset
+
+@enduml
