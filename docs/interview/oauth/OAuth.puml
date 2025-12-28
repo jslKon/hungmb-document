@@ -1,6 +1,152 @@
 @startmindmap
 'https://plantuml.com/mindmap-diagram
 
-title OAuth2 title
+title OAuth 2.0 and OpenID Connect (OIDC) Complete Overview
+
+!define RECTANGLE class
+
+* OAuth 2.0 & OIDC
+** Core Concepts
+*** Authorization Framework
+*** Identity Layer
+*** Delegated Access
+*** Token-Based Security
+
+** OAuth 2.0 Components
+*** Resource Owner (User)
+*** Client Application
+*** Authorization Server
+*** Resource Server
+*** User Agent
+
+** Grant Types
+*** Authorization Code
+**** Most Secure
+**** Web Applications
+**** Backend Required
+*** Implicit (Deprecated)
+**** SPA Applications
+**** Security Issues
+*** Client Credentials
+**** M2M Communication
+**** No User Involvement
+*** Resource Owner Password
+**** Legacy Applications
+**** Trusted First-Party Only
+*** Refresh Token
+**** Token Renewal
+**** Long-term Access
+
+** OAuth 2.0 Flow
+*** 1. Authorization Request
+*** 2. User Authentication
+*** 3. User Consent
+*** 4. Authorization Code
+*** 5. Token Exchange
+*** 6. Access Resource
+*** 7. Resource Response
+
+** OpenID Connect (OIDC)
+*** Identity Layer
+*** ID Token (JWT)
+*** UserInfo Endpoint
+*** Standardized Scopes
+*** Discovery
+
+** OIDC Flows
+*** Authorization Code Flow
+**** Include openid Scope
+**** Receive ID Token
+**** Validate Claims
+*** Implicit Flow
+**** ID Token + Access Token
+**** Direct Response
+*** Hybrid Flow
+**** Combined Approach
+**** Multiple Response Types
+
+** Security Features
+*** PKCE (Proof Key for Code Exchange)
+*** State Parameter
+*** Nonce Validation
+*** Scope Validation
+*** Token Binding
+*** HTTPS Enforcement
+
+** Token Types
+*** Access Token
+**** Short-lived (15-60 min)
+**** Bearer Token
+**** Resource Access
+*** Refresh Token
+**** Long-lived
+**** Token Renewal
+**** Secure Storage
+*** ID Token
+**** User Identity
+**** JWT Format
+**** Signed Claims
+
+** Common Scopes
+*** openid
+*** profile
+*** email
+*** address
+*** phone
+*** offline_access
+
+** Security Considerations
+*** Token Storage
+**** Secure Cookies
+**** HttpOnly Flag
+**** SameSite Policy
+*** CSRF Protection
+**** State Parameter
+**** Nonce Validation
+*** Token Validation
+**** Signature Verification
+**** Claim Validation
+**** Expiration Check
+
+** Implementation
+*** Libraries
+**** Node.js (Passport, Auth0)
+**** Python (Authlib, Requests-OAuthlib)
+**** Java (Spring Security)
+**** .NET (IdentityModel)
+*** Testing Tools
+**** Postman
+**** OAuth Playground
+**** JWT.io
+*** Providers
+**** Auth0
+**** Keycloak
+**** Okta
+**** Firebase Auth
+
+** Best Practices
+*** Use Authorization Code Flow
+*** Implement PKCE for Public Clients
+*** Validate All Tokens
+*** Secure Token Storage
+*** Implement Proper Error Handling
+*** Use HTTPS Everywhere
+*** Regular Security Audits
+*** Monitor for Suspicious Activity
+
+** Common Vulnerabilities
+*** Open Redirects
+*** CSRF Attacks
+*** Token Theft
+*** Scope Escalation
+*** Replay Attacks
+*** Authorization Code Interception
+
+** Compliance & Standards
+*** RFC 6749 (OAuth 2.0)
+*** RFC 6750 (Bearer Token)
+*** RFC 6819 (Threat Model)
+*** OpenID Connect Core
+*** OAuth 2.0 Security Best Practices
 
 @endmindmap
