@@ -1,48 +1,188 @@
-@startmindmap
-title Backend Developer with Spring Boot
+@startwbs
+title Backend Developer Interview Roadmap (Java 5+ YoE)
 
-* Backend Developer
-** Java
+* Backend Developer\nInterview Prep
+
+** 1. Core Java
+*** OOP Principles
+**** Encapsulation / Inheritance / Polymorphism / Abstraction
+**** SOLID Principles
+**** Design Patterns (Singleton, Factory, Builder, Strategy, Observer, Decorator)
+*** Java Internals
+**** JVM Architecture (ClassLoader, JIT, GC)
+**** Memory Model (Heap, Stack, Metaspace)
+**** Garbage Collection (G1, ZGC, tuning)
+*** Collections Framework
+**** List / Set / Map internals (HashMap, ConcurrentHashMap, TreeMap)
+**** Time complexity of operations
+***< Concurrency & Multithreading
+****< Thread lifecycle, synchronized, volatile
+****< ExecutorService, CompletableFuture
+****< Locks (ReentrantLock, ReadWriteLock)
+****< ThreadLocal, Atomic classes
+***< Java 8-21 Features
+****< Streams API & Functional Interfaces
+****< Optional, Records, Sealed Classes
+****< Virtual Threads (Project Loom)
+***< Exception Handling
+****< Checked vs Unchecked
+****< Best practices
+
+** 2. Spring Ecosystem
+*** Spring Core
+**** IoC Container & Dependency Injection
+**** Bean Lifecycle & Scopes
+**** AOP (Aspect Oriented Programming)
+**** Profiles & Configuration
 *** Spring Boot
-**** Spring MVC
-**** Spring Data JPA
-**** Spring Security
+**** Auto-configuration mechanism
+**** Starters & Actuator
+**** Properties / YAML config
+*** Spring MVC
+**** DispatcherServlet flow
+**** Request mapping, Filters, Interceptors
+**** Exception handling (@ControllerAdvice)
+***< Spring Data JPA
+****< Repository pattern
+****< Query methods & @Query
+****< Pagination, Specifications
+****< N+1 problem & fetch strategies
+***< Spring Security
+****< Authentication vs Authorization
+****< JWT / OAuth2 / OpenID Connect
+****< SecurityFilterChain
+****< Method-level security
+***< Spring Cloud (Microservices)
+****< Service Discovery (Eureka)
+****< API Gateway
+****< Config Server
+****< Circuit Breaker (Resilience4j)
+****< Distributed Tracing (Micrometer)
 
-** RESTful APIs
-*** Design
-*** Implementation
+** 3. API Design
+*** RESTful API
+**** HTTP methods & status codes
+**** Resource naming conventions
+**** Versioning strategies
+**** HATEOAS
+*** API Security
+**** Authentication (JWT, OAuth2, API Keys)
+**** Rate limiting & throttling
+**** CORS
+***< API Documentation
+****< OpenAPI / Swagger
+***< GraphQL (basics)
+***< gRPC (basics)
 
-** Database
-*** SQL
-**** MySQL
-**** PostgreSQL
-*** NoSQL
-**** MongoDB
-**** Redis
+** 4. Database & Data
+*** SQL Fundamentals
+**** Joins, Subqueries, Window Functions
+**** Indexing strategies (B-Tree, Hash, Composite)
+**** Query optimization & EXPLAIN
+**** Transactions & ACID
+*** RDBMS
+**** MySQL / PostgreSQL
+**** Partitioning & Sharding
+**** Replication (Master-Slave)
+***< NoSQL
+****< Redis (caching, pub/sub, data structures)
+****< MongoDB (document model, aggregation)
+****< When to use SQL vs NoSQL
+***< ORM
+****< Hibernate internals (1st/2nd level cache)
+****< Lazy vs Eager loading
+****< Entity lifecycle
+***< Database Design
+****< Normalization (1NF-3NF)
+****< ER Diagrams
+****< Schema migration (Flyway / Liquibase)
 
-** Messaging
-*** Kafka
-*** RabbitMQ
+** 5. System Design
+*** Fundamentals
+**** Scalability (Horizontal vs Vertical)
+**** Load Balancing (L4/L7, algorithms)
+**** Caching strategies (Cache-aside, Write-through, Write-behind)
+**** CAP Theorem & Trade-offs
+**** Consistent Hashing
+*** Architecture Patterns
+**** Monolith vs Microservices
+**** Event-Driven Architecture
+**** CQRS & Event Sourcing
+**** Domain-Driven Design (DDD)
+**** Hexagonal / Clean Architecture
+***< Messaging & Async
+****< Kafka (partitions, consumer groups, ordering)
+****< RabbitMQ (exchanges, queues, routing)
+****< Message delivery guarantees (at-least-once, exactly-once)
+***< Common System Designs
+****< URL Shortener
+****< Rate Limiter
+****< Notification System
+****< Chat System
+****< E-commerce Order System
 
-** Testing
-*** JUnit
-*** Mockito
+** 6. Data Structures & Algorithms
+*** Data Structures
+**** Array, LinkedList, Stack, Queue
+**** HashMap, HashSet, TreeMap
+**** Heap / Priority Queue
+**** Trie, Graph
+*** Complexity Analysis
+**** Big-O notation
+**** Space vs Time trade-offs
+***< Algorithms
+****< Sorting (QuickSort, MergeSort)
+****< Binary Search
+****< BFS / DFS
+****< Dynamic Programming (common patterns)
+****< Two Pointers, Sliding Window
+***< Practice
+****< LeetCode (Medium level, 2-3 per day)
+****< Focus: Arrays, Strings, Trees, Graphs, DP
 
-** Deployment
-*** Docker
-*** Kubernetes
+** 7. DevOps & Infrastructure
+*** Containerization
+**** Docker (Dockerfile, multi-stage builds)
+**** Docker Compose
+*** Orchestration
+**** Kubernetes (Pods, Services, Deployments, ConfigMaps)
+**** Helm charts
+*** CI/CD
+**** Jenkins / GitLab CI / GitHub Actions
+**** Build pipelines, stages
+***< Monitoring & Observability
+****< Prometheus + Grafana
+****< ELK Stack (Elasticsearch, Logstash, Kibana)
+****< Distributed tracing (Jaeger / Zipkin)
+***< Cloud Basics
+****< AWS (EC2, S3, RDS, SQS, Lambda)
+****< or equivalent cloud provider
 
-** CI/CD
-*** Jenkins
-*** GitLab CI/CD
+** 8. Testing
+*** Unit Testing
+**** JUnit 5
+**** Mockito, MockMvc
+**** Test-Driven Development (TDD)
+***< Integration Testing
+****< Testcontainers
+****< Spring Boot Test
+***< Performance Testing
+****< JMeter basics
+***< Testing Strategies
+****< Test pyramid
+****< Code coverage best practices
 
-** Monitoring
-*** Prometheus
-*** Grafana
+** 9. Soft Skills & Behavioral
+*** STAR Method
+*** Leadership & Mentoring examples
+*** Conflict resolution
+***< Project failure & lessons learned
+***< Why are you leaving / Why this company
 
-** Logging
-*** ELK Stack
-**** Elasticsearch
-**** Logstash
-**** Kibana
-@endmindmap
+** 10. Practice Plan (4 Weeks)
+*** Week 1: Core Java + DSA
+*** Week 2: Spring + Database + Testing
+***< Week 3: System Design + Microservices
+***< Week 4: Mock interviews + Behavioral + Review
+
+@endwbs
